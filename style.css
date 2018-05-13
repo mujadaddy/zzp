@@ -1,0 +1,126 @@
+body, div,p {margin: 0 0 0 0; padding: 0 0 0 0;font-family: 'Carter One', cursive;}
+body {background-color:#ccc;}
+a {color:black;}
+div{display:block;}
+.inside-portrait{margin: 0 -10px 22px 0;}
+.info-box{margin: 2px -50px 40px 2px;display: inline-flex; min-height:500px;width:917px;
+  z-index:1;padding-right:60px;}
+/*
+.info-box:hover{background-color:#eee;transform:scale(.5)transition: width 1s ease-in-out;;width:910px;}*/
+
+.info-box .title{font-family: 'Bangers'; font-size:36px;}
+.info-box .emphasis{font-weight:bold;}
+.info-box .ital{font-style:italic;}
+
+.cv {padding-left:5px;}
+.cv p {font-style:italic}
+.cv p span{font-size:12px;font-style:normal;}
+.cv p {font-size:14px;}
+
+
+span.tiny {font-size:8px;}
+.purple {color:#6000FF;}
+.brown {color:#954f00;}
+.blue {color:#00D;}
+.green {color:#070;}
+.red {color:#D00;}
+.info-box{background-color:#eee;}
+.info-box:hover .inforight{visibility:visible;}
+.inforight div li{background-color:#fff9;margin:5px 10px 0px -10px;border-radius: 3px;
+  -moz-border-radius: 3px;
+  box-shadow: 2px 3px 5px #000;
+  border: #969696 1px dashed;}
+.infoleft-wrapper{background:-moz-linear-gradient(white, #9f9fff);}
+.infosheet { background:no-repeat ; padding-top:3px; background-clip:padding-box;
+background-size:300% auto;background-position: 45% 0%;}
+
+.info-box.half .infosheet{background-size:100% auto;background-position: 70% -40%;}
+.infosheet:hover {background-position: 70% -70%;background-size:90% auto;}
+.info-box.half .infosheet:hover {background-position: 45% 0%;background-size:150% auto;}
+.alias {margin: -160px 30px; font-size: 80px; z-index:200; }
+
+.inforight{font-size:17px; width: 50%;  min-height: 495px;
+  margin-top:-115%; margin-left:50%; z-index:250; padding-bottom:20px;
+/*display:flex;flex-direction:column;*/
+}
+
+.inforight div { border: double grey;/**/
+margin: 2px;float: left;display:inline-block;}
+
+.info-box .inforight div.kinetics, .inforight div.energetics, .inforight div.psychics {display:none}
+.kinetics .inforight div.kinetics, .energetics .inforight div.energetics, .psychics .inforight div.psychics {display:block;visibility:visible;position:relative;}
+
+.infoleft-wrapper{transform: scale(.5);transform-origin: 0 0;}
+.info-box .info-box .infoleft-wrapper{transform:scale(.15);}
+.info-box .info-box .inforight{display:none;}
+.cv .name {font-size:20px;}
+
+.kinetics .inforight div.kinetics { background-image:url("https://image.ibb.co/e9C8U6/kinetics.png"); background-repeat:no-repeat; background-size:contain; width: 170px; min-height:200px; height:auto;
+  border:none!important;
+	background-color:rgba(0,255,0,.3);
+	margin: 6px 2px 2px -180px;
+	margin-bottom:-33%;z-index:250;
+}
+.kinetics .inforight div.kinetics p, .energetics .inforight div.energetics p, .psychics .inforight div.psychics p{font-family: 'Bangers'; font-size:60px; color:#20d020;}
+.kinetics .inforight div.kinetics .k{margin-left:25px; margin-top:-10px; font-size:42px; }
+.kinetics .inforight div.kinetics .m{margin-left:25px; margin-top:25px; color:#1ea81e;}
+.kinetics .inforight div.kinetics .t{margin-left:68px; margin-top:11px; color:#cc8330;}
+.kinetics .inforight div.kinetics .s{margin-left:111px; margin-top:-66px; color:#f01010;}
+.kinetics .inforight div.kinetics .f,.energetics .inforight div.energetics .f, .psychics .inforight div.psychics .f{font-family: 'Carter One', cursive; font-size:14px; margin-left:-25px; margin-top:0px; color:#1ea81e;list-style-type: none;}
+.kinetics .inforight div.kinetics .f li{}
+
+
+
+.energetics .inforight div.energetics { background-image:url("https://image.ibb.co/d1J42R/energetics.png");
+  background-repeat:no-repeat; background-size:contain; width: 170px; min-height:200px;	margin-left:-180px!important;border:none!important; background-color:rgba(0,0,255,.3);}
+.energetics.kinetics .inforight div.energetics{margin-left:-455px!important;}
+.energetics .inforight div.energetics p{color:#00C; margin-top:45px; margin-left:50px; margin-bottom:10px;}
+.energetics .inforight div.energetics .l {font-size:42px;}
+.energetics .inforight div.energetics .f {color:#1010f0;font-size:12px;}
+.energetics .inforight div.energetics .f li{}
+.energetics .inforight div.energetics .f li.big{font-size:16px;}
+.energetics .inforight div.energetics .tiny{margin-top:-20px;margin-left:15px; display:block;}
+
+.psychics .inforight div.psychics { background-image:url("https://image.ibb.co/c5yRGm/psychics.png");
+  background-repeat:no-repeat; background-size:contain; width: 170px; min-height:200px;	margin-left:-180px!important; border:none!important; background-color:rgba(255,255,255,.5);}
+.psychics.kinetics .inforight div.psychics{margin-left:-455px!important;}
+.psychics.energetics .inforight div.psychics{margin-left:-455px!important;}
+.psychics.kinetics.energetics .inforight div.psychics{margin-top:200px!important;}
+.psychics .inforight div.psychics p{color:#6000ff; margin-top:45px; margin-left:50px; margin-bottom:10px;}
+.psychics .inforight div.psychics .l {font-size:42px;}
+.psychics .inforight div.psychics .f {color:#6000ff;font-size:12px;}
+.psychics .inforight div.psychics .f li{}
+.psychics .inforight div.psychics .f li.big{font-size:16px;}
+.psychics .inforight div.psychics .tiny{margin-top:-20px; display:block;}
+
+.inforight .contactList{/*display: flex;
+  flex-direction: row;*/
+
+  min-height: 160px;}
+
+.inforight .contacts {background-repeat:no-repeat; background-position:50% 3%; background-size:160%; width:80px; height:100px; display:inline-flex;margin-bottom:15px; border:thin grey solid;}
+
+.contacts p{margin-top:100px;font-size:12px;}
+.contacts p.small{font-size:10px; margin-top:100px;}.contacts p.tiny{font-size:6px;margin-top:110px;}
+
+.stats-group div {border:none;}
+.stat-wrapper {background-color:#fff;}
+.stat-wrapper div {width:22%;}
+.stat-wrapper div .stat{height:8%; width:40%;}
+.stat-wrapper div .dice{height:10%; width:50%;}
+.dice {clip-path: polygon(0 0);}
+.dice.one {clip-path: polygon(0 0, 0% 0, 50% 60%, 0 100%);}
+.dice.two {clip-path: polygon(0 0, 70% 0, 33% 60%, 0 100%);}
+.dice.three {clip-path: polygon(0 0, 48% 0, 88% 59%, 0 100%);}
+.dice.four {clip-path:none;}
+.skill-wrapper span{margin-right:10px;font-family:Bangers;font-size:18px;}
+
+.groupShot { border:thin grey solid;min-height:200px;min-width:200px;display:inline-block;font-size:24px; padding-right:35px;}
+.groupShot .contacts, .individual .contacts{border:none;margin-right:-35px;float:left;width:120px;height:180px;
+  background-position:50% 3%; background-size:160%;display:inline-flex;margin-bottom:15px;
+}
+.individual{border:thin solid grey;display:inline-flex;}
+.individual p{padding-top:180px;margin-left:-70px;width:120px;}
+.groupShot p{margin-top:180px;padding:2px;}
+.groupShot p.alt{margin-top:195px;}
+.groupShot p.group{margin-top:210px;}
