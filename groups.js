@@ -112,9 +112,7 @@ function addStyleString(str) {
 function buildHeroes(){
 var CHARINFO=ZZP.CHARINFO;
 var keys = Object.keys(CHARINFO); //get the keys.
-var docFrag = document.createDocumentFragment();
-  //Contacts CSS
-  var contactsCSS="";
+//var docFrag = document.createDocumentFragment();
   //////////////////////Global Groups etc
   var groupsAr=[];
   var groupsCSS="";
@@ -124,6 +122,21 @@ for (var i = 0; i < keys.length; i++)
   // Secret Identities Controller
   if (CHARINFO[keys[i]].publicity!="secret"||window.location.href.indexOf("source.html")>-1){
 
+    //@@@ GROUPS rewrite
+    var currChar=CHARINFO[keys[i]];
+    // write name-classes
+    groupsCSS+=".contacts."+currChar.alias.replace(/ /g,'')+"{background-image:url('https://image.ibb.co/"+currChar.imgkey+"/"+currChar.alias+".png');}";
+    // get group list
+    if (currChar.primaryaffil.length>0){
+      //tempNode.classList.add(group.replace(/ /g,''));
+      groupsAr.push(currChar.primaryaffil);
+    }
+    else{
+      buildChar(currChar);
+    }
+    // create div.group
+
+  /*
   var tempNode = document.querySelector("div[data-type='template']").cloneNode(true); //true for deep clone
   tempNode.classList.add(CHARINFO[keys[i]].alias.replace(/ /g,''));
   tempNode.querySelector("div.alias").textContent = '"'+CHARINFO[keys[i]].alias+'"';
@@ -224,15 +237,16 @@ for (var i = 0; i < keys.length; i++)
   groupsAr.push(group);  }
 
   document.body.appendChild(tempNode);
+  */
 }//secret
 }
 
-document.body.appendChild(docFrag);
-delete docFrag;
+//document.body.appendChild(docFrag);
+//delete docFrag;
 
 ///console.log(contactsCSS);
-addStyleString(contactsCSS);
-getAliasGroup(groupsAr);
+addStyleString(groupsCSS);
+buildGroups(groupsAr);
 
 }
 
@@ -372,12 +386,6 @@ function getAliasGroup(groups){
   var retGroupMkup=[]; var groupsCSS=""
   for (g=0;g<cleanGroups.length;g++){
      var thisGroup = ZZP.CHARINFO.filter(char => char.primaryaffil==cleanGroups[g]); // Arr(GroupList) of Arr(Group) of Char Objs
-     var groupShot = "<div class='groupShot "+cleanGroups[g].replace(/ /g,'')+"'>";
-     for (t=0;t<thisGroup.length;t++){
-        groupShot+="<a href='#"+thisGroup[t].alias+"' title='"+thisGroup[t].alias+"'><div class='contacts "+thisGroup[t].alias.replace(/ /g,'')+"'></div></a>";
-     }
-     groupShot+="<p class='blue'>"+cleanGroups[g]+"</p></div>";
-     retGroupMkup.push(groupShot);
 
      var groupMembers = document.querySelectorAll("."+cleanGroups[g].replace(/ /g,'')+" .contactList");
      for (m=0;m<groupMembers.length;m++){
@@ -387,8 +395,25 @@ function getAliasGroup(groups){
       //var groupContacts = document.querySelectorAll('.contacts.'+cleanGroups[g].replace(/ /g,''));
 
   }
-
   return retGroupMkup;
+}
+function buildGroups(groups){
+  var cleanGroups = [...new Set(groups)].filter(gr=>gr.length>0);
+  //var retGroupMkup=[];
+  for (g=0;g<cleanGroups.length;g++){
+   var thisGroup = ZZP.CHARINFO.filter(char => char.primaryaffil==cleanGroups[g]);
+
+     var groupShot = "<div class='groupShot "+cleanGroups[g].replace(/ /g,'')+"'>";
+     for (t=0;t<thisGroup.length;t++){ var altRow = ""; if (t%2!=0){altRow=" class='alt'";}
+        groupShot+="<a href='#"+thisGroup[t].alias+"' title='"+thisGroup[t].alias+"'><div class='contacts "+thisGroup[t].alias.replace(/ /g,'')+"'><p"+altRow+">"+thisGroup[t].alias+"</p></div></a>";
+     }
+     groupShot+="<p class='group blue'>"+cleanGroups[g]+"</p></div>";
+     //retGroupMkup.push(groupShot);
+  document.querySelector("#gG").innerHTML+=groupShot;
+  }
+}
+function buildChar(cc){
+    document.querySelector("#gG").innerHTML+="<div class='individual'><div class='contacts "+cc.alias.replace(/ /g,'')+"'></div><p>"+cc.alias+"</p></div>";
 }
 loadData();
 })();

@@ -1,6 +1,6 @@
 # zzp
 Zoom Zap Pow web pages:
 
-Root is a playground. 
+Root is a playground.
 
-Coming soon: /groups.html
+Working on: /groups.html
