@@ -1,6 +1,46 @@
 ZZP=(function () {
   	_zzp={};
   	_zzp.CHARINFO=[];
+    _zzp.LEVEL="GUEST";
+    var dataType = "hero";
+if (location.indexOf("source.html"))>-1{_zzp.LEVEL="FULL";}
+var hashOperation = location.hash; if (hashOperation=="vehicle"||hashOperation="weapon"){dataType=hashOperation;}
+
+function loadAllData(){
+  loadData("hero"); loadData("vehicle"); loadData("weapon");
+}
+function showSelectedData(){
+  switch (hashOperation){
+    case "vehicle": listVehicles(); //display all vehicles
+      break;
+    case "weapon": listWeapons(); //display all weapons
+      break;
+    default:
+      listHeroes(); //try to find Hero to display
+      break;
+  }
+}
+function listVehicles(){
+  document.write(ZZP.VINFO);
+}
+function listWeapons(){
+  document.write(ZZP.WINFO);
+}
+function listHeroes(){ hideHeroes();
+  var heroObj = _zzp.CHARINFO.find(findHero);
+  if (heroObj==null){
+    showAllHeroes();
+  } else {
+    document.querySelector("div.info-box."+heroObj.alias.replace(" ","")).style.display= "inline-flex";
+  }
+}
+_zzp.HERO=listHeroes;
+_zzp.WEAPON=listWeapons;
+_zzp.VEHICLE=listVehicles;
+function hideHeroes(){document.querySelector("div.info-box").style.display="none";}
+function showAllHeroes(){document.querySelector("div.info-box").style.display="inline-flex";}
+function findHero(hero){return hero.alias===hashOperation;}
+
 function CSVToArray(strData, strDelimiter) {
     // Check to see if the delimiter is defined. If not,
     // then default to comma.
@@ -100,6 +140,7 @@ function buildArray(type, csvData){
     case "weapon":  buildWeaponsArray(csvData);
       break;
   }
+  showSelectedData();
 }
 function procArray(raw){var retA = [];
   var rows = raw.split("\n");
@@ -118,7 +159,7 @@ function procArray(raw){var retA = [];
 }
 function buildCharArray(fullCSV){
   _zzp.CHARINFO=procArray(fullCSV);
-  buildHeroes();
+  //buildHeroes();
 }
 function buildVArray(fullCSV){
   _zzp.VINFO=procArray(fullCSV);
@@ -154,13 +195,13 @@ function buildHeroes(){
     tempNode.querySelector("div.infosheet").style.backgroundImage='url("https://image.ibb.co/'+CHARINFO[keys[i]].imgkey+'/'+CHARINFO[keys[i]].alias+'.png")';
     //contacts first box
     tempNode.querySelector("span.name").textContent = CHARINFO[keys[i]].name;
-    tempNode.querySelector("a.anchor").setAttribute("name",CHARINFO[keys[i]].alias);
+    tempNode.querySelector("a.anchor").setAttribute("name",CHARINFO[keys[i]].alias).onclick="ZZP.HERO();";
     tempNode.querySelector("span.ht").innerHTML = CHARINFO[keys[i]].ht;
     tempNode.querySelector("span.wt").textContent = CHARINFO[keys[i]].wt
     tempNode.querySelector("span.hq").textContent = CHARINFO[keys[i]].hq;
     tempNode.querySelector("span.debut").textContent = CHARINFO[keys[i]].debut;
     tempNode.querySelector("span.bio").textContent = CHARINFO[keys[i]].bio;
-    if (CHARINFO[keys[i]].publicity!="open"){tempNode.style.display = "inline-flex";}
+    //if (CHARINFO[keys[i]].publicity!="open"){tempNode.style.display = "inline-flex";}
 
     tempNode.querySelector("div.contactList").innerHTML = contactsHTML(CHARINFO[keys[i]].contacts);
 
@@ -415,7 +456,7 @@ function getAliasGroup(groups){
   return retGroupMkup;
 }
 
-loadData();
+loadAllData();
 return _zzp;
 })();
 console.log(ZZP.CHARINFO);
