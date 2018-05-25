@@ -1,4 +1,4 @@
-ZZP=ZZP || (function () {
+ZZP=(function () {
   	_zzp={};
   	_zzp.CHARINFO=[];
 function CSVToArray(strData, strDelimiter) {
