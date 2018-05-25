@@ -67,11 +67,16 @@ function CSV2OBJ(csv) {
     //return str;
 	return objArray;
 }
-function loadData() {
+function loadData(dataType) {
 	ZZP={};
-	ZZP.CHARINFO=[];
-
-  url= "https://docs.google.com/spreadsheets/d/e/2PACX-1vSbtWm06EoEuzW1F3NXmDuZI3hfQD-XEEaND93LyfZuidMMwacGUOe42L6J6xjb3txJ4aucpBRaeQfC/pub?single=true&output=csv&gid=0";
+	ZZP.CHARINFO=[]; 
+	var dataEnum=0;
+	if (dataType=="vehicle"){dataEnum=1;}
+        else if (dataType=="weapon"){dataEnum=2;}
+	else {  dataType = "hero";}
+  // dataType="vehicle"; dataEnum = 1;
+  // dataType="weapon"; dataEnum = 2
+  url= "https://docs.google.com/spreadsheets/d/e/2PACX-1vSbtWm06EoEuzW1F3NXmDuZI3hfQD-XEEaND93LyfZuidMMwacGUOe42L6J6xjb3txJ4aucpBRaeQfC/pub?single=true&output=csv&gid="+dataEnum;
 
 
                 csvData = $.ajax({
@@ -83,8 +88,18 @@ function loadData() {
                     error: function (result){console.log("failure",result);}
                 })
     .done(function(result){
-                 buildCharArray(result);
+                 buildArray(dataType, result);
     });
+}
+function buildArray(type, csvData){
+  switch (type){
+    case "hero": buildCharArray(csvData);
+      break;
+    case "vehicle": buildVArray(csvData);
+      break;
+    case "weapon":  buildWeaponsArray(csvData);
+      break;
+  }
 }
 function buildCharArray(fullCSV){
   var charArray = [];
