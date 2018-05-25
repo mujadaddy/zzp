@@ -3,7 +3,7 @@ ZZP=(function () {
   	_zzp.CHARINFO=[];
     _zzp.LEVEL="GUEST";
     var dataType = "hero";
-if (location.indexOf("source.html"))>-1{_zzp.LEVEL="FULL";}
+if (location.indexOf("source.html")>-1){_zzp.LEVEL="FULL";}
 var hashOperation = location.hash; if (hashOperation=="vehicle"||hashOperation="weapon"){dataType=hashOperation;}
 
 function loadAllData(){
