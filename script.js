@@ -1,4 +1,6 @@
-(function () {
+ZZP=ZZP || (function () {
+  	_zzp={};
+  	_zzp.CHARINFO=[];
 function CSVToArray(strData, strDelimiter) {
     // Check to see if the delimiter is defined. If not,
     // then default to comma.
@@ -68,8 +70,6 @@ function CSV2OBJ(csv) {
 	return objArray;
 }
 function loadData(dataType) {
-	ZZP={};
-	ZZP.CHARINFO=[]; 
 	var dataEnum=0;
 	if (dataType=="vehicle"){dataEnum=1;}
         else if (dataType=="weapon"){dataEnum=2;}
@@ -84,7 +84,7 @@ function loadData(dataType) {
                     url: url,
                     //dataType: "text/csv",
                     success: function (result) {
-                     console.log(result);},
+                     console.log(dataType+": "+result.length);},
                     error: function (result){console.log("failure",result);}
                 })
     .done(function(result){
@@ -101,10 +101,9 @@ function buildArray(type, csvData){
       break;
   }
 }
-function buildCharArray(fullCSV){
-  var charArray = [];
-  var rows = fullCSV.split("\n");
-    var headers = rows[0].split(",");
+function procArray(raw){var retA = [];
+  var rows = raw.split("\n");
+  var headers = rows[0].split(",");
   for (r=1;r<rows.length;r++){
     var oneRow = rows[r];
     var thisRow = oneRow.split(",");
@@ -114,10 +113,20 @@ function buildCharArray(fullCSV){
       var key=headers[i];
       obj[key] = thisRow[i];//.replace("+",",").replace("#",'"').replace("@","'");
     }
-    charArray.push(obj);
-  }
-  ZZP.CHARINFO=charArray; //console.log(ZZP.CHARINFO);
+    retA.push(obj);
+  } return retA;
+}
+function buildCharArray(fullCSV){
+  _zzp.CHARINFO=procArray(fullCSV);
   buildHeroes();
+}
+function buildVArray(fullCSV){
+  _zzp.VINFO=procArray(fullCSV);
+  //buildVehicles();
+}
+function buildWeaponsArray(fullCSV){
+  _zzp.WINFO=procArray(fullCSV);
+  //buildWeapons();
 }
 function addStyleString(str) {
     var node = document.createElement('style');
@@ -125,129 +134,129 @@ function addStyleString(str) {
     document.body.appendChild(node);
 }
 function buildHeroes(){
-var CHARINFO=ZZP.CHARINFO;
-var keys = Object.keys(CHARINFO); //get the keys.
-var docFrag = document.createDocumentFragment();
-  //Contacts CSS
-  var contactsCSS="";
-  //////////////////////Global Groups etc
-  var groupsAr=[];
-  var groupsCSS="";
+  var CHARINFO=_zzp.CHARINFO;
+  var keys = Object.keys(CHARINFO); //get the keys.
+  var docFrag = document.createDocumentFragment();
+    //Contacts CSS
+    var contactsCSS="";
+    //////////////////////Global Groups etc
+    var groupsAr=[];
+    var groupsCSS="";
 
-for (var i = 0; i < keys.length; i++)
-{
-  // Secret Identities Controller
-  if (CHARINFO[keys[i]].publicity!="secret"||window.location.href.indexOf("source.html")>-1){
+  for (var i = 0; i < keys.length; i++)
+  {
+    // Secret Identities Controller
+    if (CHARINFO[keys[i]].publicity!="secret"||window.location.href.indexOf("source.html")>-1){
 
-  var tempNode = document.querySelector("div[data-type='template']").cloneNode(true); //true for deep clone
-  tempNode.classList.add(CHARINFO[keys[i]].alias.replace(/ /g,''));
-  tempNode.querySelector("div.alias").textContent = '"'+CHARINFO[keys[i]].alias+'"';
-  tempNode.querySelector("div.infosheet").style.backgroundImage='url("https://image.ibb.co/'+CHARINFO[keys[i]].imgkey+'/'+CHARINFO[keys[i]].alias+'.png")';
-  //contacts first box
-  tempNode.querySelector("span.name").textContent = CHARINFO[keys[i]].name;
-  tempNode.querySelector("a.anchor").setAttribute("name",CHARINFO[keys[i]].alias);
-  tempNode.querySelector("span.ht").innerHTML = CHARINFO[keys[i]].ht;
-  tempNode.querySelector("span.wt").textContent = CHARINFO[keys[i]].wt
-  tempNode.querySelector("span.hq").textContent = CHARINFO[keys[i]].hq;
-  tempNode.querySelector("span.debut").textContent = CHARINFO[keys[i]].debut;
-  tempNode.querySelector("span.bio").textContent = CHARINFO[keys[i]].bio;
-  if (CHARINFO[keys[i]].publicity!="open"){tempNode.style.display = "inline-flex";}
+    var tempNode = document.querySelector("div[data-type='template']").cloneNode(true); //true for deep clone
+    tempNode.classList.add(CHARINFO[keys[i]].alias.replace(/ /g,''));
+    tempNode.querySelector("div.alias").textContent = '"'+CHARINFO[keys[i]].alias+'"';
+    tempNode.querySelector("div.infosheet").style.backgroundImage='url("https://image.ibb.co/'+CHARINFO[keys[i]].imgkey+'/'+CHARINFO[keys[i]].alias+'.png")';
+    //contacts first box
+    tempNode.querySelector("span.name").textContent = CHARINFO[keys[i]].name;
+    tempNode.querySelector("a.anchor").setAttribute("name",CHARINFO[keys[i]].alias);
+    tempNode.querySelector("span.ht").innerHTML = CHARINFO[keys[i]].ht;
+    tempNode.querySelector("span.wt").textContent = CHARINFO[keys[i]].wt
+    tempNode.querySelector("span.hq").textContent = CHARINFO[keys[i]].hq;
+    tempNode.querySelector("span.debut").textContent = CHARINFO[keys[i]].debut;
+    tempNode.querySelector("span.bio").textContent = CHARINFO[keys[i]].bio;
+    if (CHARINFO[keys[i]].publicity!="open"){tempNode.style.display = "inline-flex";}
 
-  tempNode.querySelector("div.contactList").innerHTML = contactsHTML(CHARINFO[keys[i]].contacts);
+    tempNode.querySelector("div.contactList").innerHTML = contactsHTML(CHARINFO[keys[i]].contacts);
 
-  if (CHARINFO[keys[i]].picclass.length>0){
-  tempNode.classList.add(CHARINFO[keys[i]].picclass);}
+    if (CHARINFO[keys[i]].picclass.length>0){
+    tempNode.classList.add(CHARINFO[keys[i]].picclass);}
 
-  if (CHARINFO[keys[i]].hasOwnProperty("kinetics")){
-    if (CHARINFO[keys[i]].kinetics.length>0){
-      var fullKin = CHARINFO[keys[i]].kinetics.replace(/"/g,'');
-      var splitKin = fullKin.split("~");
-      var Kin = splitKin[0]; var Mig = splitKin[1]; var Tou = splitKin[2];var Spr = splitKin[3];
+    if (CHARINFO[keys[i]].hasOwnProperty("kinetics")){
+      if (CHARINFO[keys[i]].kinetics.length>0){
+        var fullKin = CHARINFO[keys[i]].kinetics.replace(/"/g,'');
+        var splitKin = fullKin.split("~");
+        var Kin = splitKin[0]; var Mig = splitKin[1]; var Tou = splitKin[2];var Spr = splitKin[3];
 
-      tempNode.querySelector(".kinetics p.k").textContent=Kin;
-      tempNode.querySelector(".kinetics p.m").textContent=Mig;
-      tempNode.querySelector(".kinetics p.t").textContent=Tou;
-      tempNode.querySelector(".kinetics p.s").textContent=Spr;
+        tempNode.querySelector(".kinetics p.k").textContent=Kin;
+        tempNode.querySelector(".kinetics p.m").textContent=Mig;
+        tempNode.querySelector(".kinetics p.t").textContent=Tou;
+        tempNode.querySelector(".kinetics p.s").textContent=Spr;
 
-      if (splitKin.length>4){
-        var ulText = "";
-        for (k=4;k<splitKin.length;k++){ //list Kinetic Features
-          var featDisplay = showFeaturefromString(Kin,splitKin[k]);
-            ulText+="<li class='"+featDisplay[0]+"'>&gt;"+featDisplay[1]+ " " + featDisplay[2]+"</li>";
-        }
-        tempNode.querySelector(".kinetics ul").innerHTML=ulText;
-      }
-    tempNode.classList.add("kinetics");
-    }
-  }
-  if (CHARINFO[keys[i]].hasOwnProperty("energetics")){
-    if (CHARINFO[keys[i]].energetics.length>0){
-      var fullEn = CHARINFO[keys[i]].energetics.replace(/"/g,'');
-      var splitEn = fullEn.split("~");
-
-      var En = splitEn[0];
-
-      tempNode.querySelector(".energetics span.e").textContent=En;
-
-      if (splitEn.length>1){
-        var ulText = "";
-        for (e=1;e<splitEn.length;e++){ //list Energetic Features
-          var featDisplay = showFeaturefromString(En,splitEn[e]);
-
-          ulText+="<li class='"+featDisplay[0]+"'>*"+featDisplay[1]+" "+featDisplay[2]+"</li>";
-        }
-        tempNode.querySelector(".energetics ul").innerHTML=ulText;
-      }
-
-      tempNode.classList.add("energetics");
-    }
-  }
-  if (CHARINFO[keys[i]].hasOwnProperty("psychics")){
-    if (CHARINFO[keys[i]].psychics.length>0){
-        var fullPsy = CHARINFO[keys[i]].psychics.replace(/"/g,'');
-        var splitPsy = fullPsy.split("~");
-
-        var Psy = splitPsy[0];
-
-        tempNode.querySelector(".psychics span.p").textContent=Psy;
-
-        if (splitPsy.length>1){
+        if (splitKin.length>4){
           var ulText = "";
-          for (p=1;p<splitPsy.length;p++){ //list Psychic Features
-          var featDisplay = showFeaturefromString(Psy,splitPsy[p]);
-            ulText+="<li class='"+featDisplay[0]+"'>:"+featDisplay[1]+ " " + featDisplay[2]+":</li>";
+          for (k=4;k<splitKin.length;k++){ //list Kinetic Features
+            var featDisplay = showFeaturefromString(Kin,splitKin[k]);
+              ulText+="<li class='"+featDisplay[0]+"'>&gt;"+featDisplay[1]+ " " + featDisplay[2]+"</li>";
           }
-          tempNode.querySelector(".psychics ul").innerHTML=ulText;
+          tempNode.querySelector(".kinetics ul").innerHTML=ulText;
+        }
+      tempNode.classList.add("kinetics");
+      }
+    }
+    if (CHARINFO[keys[i]].hasOwnProperty("energetics")){
+      if (CHARINFO[keys[i]].energetics.length>0){
+        var fullEn = CHARINFO[keys[i]].energetics.replace(/"/g,'');
+        var splitEn = fullEn.split("~");
+
+        var En = splitEn[0];
+
+        tempNode.querySelector(".energetics span.e").textContent=En;
+
+        if (splitEn.length>1){
+          var ulText = "";
+          for (e=1;e<splitEn.length;e++){ //list Energetic Features
+            var featDisplay = showFeaturefromString(En,splitEn[e]);
+
+            ulText+="<li class='"+featDisplay[0]+"'>*"+featDisplay[1]+" "+featDisplay[2]+"</li>";
+          }
+          tempNode.querySelector(".energetics ul").innerHTML=ulText;
         }
 
-        tempNode.classList.add("psychics");
+        tempNode.classList.add("energetics");
+      }
     }
+    if (CHARINFO[keys[i]].hasOwnProperty("psychics")){
+      if (CHARINFO[keys[i]].psychics.length>0){
+          var fullPsy = CHARINFO[keys[i]].psychics.replace(/"/g,'');
+          var splitPsy = fullPsy.split("~");
+
+          var Psy = splitPsy[0];
+
+          tempNode.querySelector(".psychics span.p").textContent=Psy;
+
+          if (splitPsy.length>1){
+            var ulText = "";
+            for (p=1;p<splitPsy.length;p++){ //list Psychic Features
+            var featDisplay = showFeaturefromString(Psy,splitPsy[p]);
+              ulText+="<li class='"+featDisplay[0]+"'>:"+featDisplay[1]+ " " + featDisplay[2]+":</li>";
+            }
+            tempNode.querySelector(".psychics ul").innerHTML=ulText;
+          }
+
+          tempNode.classList.add("psychics");
+      }
+    }
+    //ATTRIBUTE DICE
+        tempNode.querySelector(".strength .dice").classList.add(getDiceWord(CHARINFO[keys[i]].strength));
+        tempNode.querySelector(".dexterity .dice").classList.add(getDiceWord(CHARINFO[keys[i]].dexterity));
+        tempNode.querySelector(".presence .dice").classList.add(getDiceWord(CHARINFO[keys[i]].presence));
+        tempNode.querySelector(".knowledge .dice").classList.add(getDiceWord(CHARINFO[keys[i]].knowledge));
+        tempNode.querySelector(".skill-wrapper").innerHTML= skillsHTML(CHARINFO[keys[i]].skills);
+
+    contactsCSS+=".contactList ."+CHARINFO[keys[i]].alias.replace(/ /g,'')+"{background-image:url('https://image.ibb.co/"+CHARINFO[keys[i]].imgkey+"/"+CHARINFO[keys[i]].alias+".png');}";
+    //contactsCSS+="."+CHARINFO[keys[i]].alias.replace(/ /g,'')+" ."+CHARINFO[keys[i]].alias.replace(/ /g,'')+"{display:none;}";
+
+    var group = CHARINFO[keys[i]].primaryaffil;
+    if (group.length>0){
+    tempNode.classList.add(group.replace(/ /g,''));
+    groupsAr.push(group);  }
+
+    document.body.appendChild(tempNode);
+  }//secret
   }
-  //ATTRIBUTE DICE
-      tempNode.querySelector(".strength .dice").classList.add(getDiceWord(CHARINFO[keys[i]].strength));
-      tempNode.querySelector(".dexterity .dice").classList.add(getDiceWord(CHARINFO[keys[i]].dexterity));
-      tempNode.querySelector(".presence .dice").classList.add(getDiceWord(CHARINFO[keys[i]].presence));
-      tempNode.querySelector(".knowledge .dice").classList.add(getDiceWord(CHARINFO[keys[i]].knowledge));
-      tempNode.querySelector(".skill-wrapper").innerHTML= skillsHTML(CHARINFO[keys[i]].skills);
 
-  contactsCSS+=".contactList ."+CHARINFO[keys[i]].alias.replace(/ /g,'')+"{background-image:url('https://image.ibb.co/"+CHARINFO[keys[i]].imgkey+"/"+CHARINFO[keys[i]].alias+".png');}";
-  //contactsCSS+="."+CHARINFO[keys[i]].alias.replace(/ /g,'')+" ."+CHARINFO[keys[i]].alias.replace(/ /g,'')+"{display:none;}";
+  document.body.appendChild(docFrag);
+  delete docFrag;
 
-  var group = CHARINFO[keys[i]].primaryaffil;
-  if (group.length>0){
-  tempNode.classList.add(group.replace(/ /g,''));
-  groupsAr.push(group);  }
-
-  document.body.appendChild(tempNode);
-}//secret
-}
-
-document.body.appendChild(docFrag);
-delete docFrag;
-
-///console.log(contactsCSS);
-addStyleString(contactsCSS);
-getAliasGroup(groupsAr);
+  ///console.log(contactsCSS);
+  addStyleString(contactsCSS);
+  getAliasGroup(groupsAr);
 
 }
 
@@ -386,7 +395,7 @@ function getAliasGroup(groups){
   var cleanGroups = [...new Set(groups)].filter(gr=>gr.length>0);
   var retGroupMkup=[]; var groupsCSS=""
   for (g=0;g<cleanGroups.length;g++){
-     var thisGroup = ZZP.CHARINFO.filter(char => char.primaryaffil==cleanGroups[g]); // Arr(GroupList) of Arr(Group) of Char Objs
+     var thisGroup = _zzp.CHARINFO.filter(char => char.primaryaffil==cleanGroups[g]); // Arr(GroupList) of Arr(Group) of Char Objs
      var groupShot = "<div class='groupShot "+cleanGroups[g].replace(/ /g,'')+"'>";
      for (t=0;t<thisGroup.length;t++){
         groupShot+="<a href='#"+thisGroup[t].alias+"' title='"+thisGroup[t].alias+"'><div class='contacts "+thisGroup[t].alias.replace(/ /g,'')+"'></div></a>";
@@ -405,5 +414,8 @@ function getAliasGroup(groups){
 
   return retGroupMkup;
 }
+
 loadData();
+return _zzp;
 })();
+console.log(ZZP.CHARINFO);
