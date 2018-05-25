@@ -4,7 +4,7 @@ ZZP=(function () {
     _zzp.LEVEL="GUEST";
     var dataType = "hero";
 if (location.indexOf("source.html")>-1){_zzp.LEVEL="FULL";}
-var hashOperation = location.hash; if (hashOperation=="vehicle"||hashOperation="weapon"){dataType=hashOperation;}
+var hashOperation = location.hash; if (hashOperation=="vehicle"||hashOperation=="weapon"){dataType=hashOperation;}
 
 function loadAllData(){
   loadData("hero"); loadData("vehicle"); loadData("weapon");
