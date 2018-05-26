@@ -9,6 +9,8 @@ div{display:block;}
 .info-box:hover{background-color:#eee;transform:scale(.5)transition: width 1s ease-in-out;;width:910px;}*/
 
 .info-box .title{font-family: 'Bangers'; font-size:36px;}
+.bang{font-family: :'Bangers';}
+.small{font-size:12px;}.contacts p.tiny{font-size:6px;}
 .info-box .emphasis{font-weight:bold;}
 .info-box .ital{font-style:italic;}
 
@@ -24,6 +26,16 @@ span.tiny {font-size:8px;}
 .blue {color:#00D;}
 .green {color:#070;}
 .red {color:#D00;}
+
+tbody tr:nth-child(odd) {
+  background-color: #ddd;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #eee;
+}
+
+
 .info-box{background-color:#eee;}
 .info-box:hover .inforight{visibility:visible;}
 .inforight div li{background-color:#fff9;margin:5px 10px 0px -10px;border-radius: 3px;
