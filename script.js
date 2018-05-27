@@ -1,46 +1,111 @@
-ZZP=(function () {
-  	_zzp={};
-  	_zzp.CHARINFO=[];
-    _zzp.LEVEL="GUEST";
+(function () {
+  	ZZP={};
+  	ZZP.CHARINFO=[];
+    ZZP.LEVEL="GUEST";
     var dataType = "hero";
-if (location.indexOf("source.html")>-1){_zzp.LEVEL="FULL";}
-var hashOperation = location.hash; if (hashOperation=="vehicle"||hashOperation=="weapon"){dataType=hashOperation;}
+if (location.href.indexOf("source.html")>-1){ZZP.LEVEL="FULL";}
+var hashOperation = location.hash.replace("#",""); if (hashOperation=="vehicle"||hashOperation=="weapon"){dataType=hashOperation;}
 
 function loadAllData(){
   loadData("hero"); loadData("vehicle"); loadData("weapon");
 }
 function showSelectedData(){
+  document.getElementById("hero").style.display="none";
+  document.getElementById("vehicle").style.display="none";
+  document.getElementById("weapon").style.display="none";
   switch (hashOperation){
     case "vehicle": listVehicles(); //display all vehicles
+  document.getElementById("vehicle").style.display="inline-flex";
       break;
-    case "weapon": listWeapons(); //display all weapons
+    case "weapon":listWeapons(); //display all weapons
+  document.getElementById("weapon").style.display="inline-flex";
       break;
     default:
       listHeroes(); //try to find Hero to display
+  document.getElementById("hero").style.display="block";
       break;
   }
 }
 function listVehicles(){
-  document.write(ZZP.VINFO);
+  retVehs = "<table><tr><th>Cost</th><th>Name</th><th>Velocity</th><th>Size;<span class='small'> Cargo/Passengers</span></th><th>Traits</th></tr>";
+  for(v=0;v<ZZP.VINFO.length;v++){
+    var arrTr=[ZZP.VINFO[v].traits];
+    if (arrTr.indexOf("~")>0){
+      arrTr=ZZP.VINFO[v].traits.split('~');
+    }if (arrTr[0]==""){arrTr=[];}
+     var cV=VEH(ZZP.VINFO[v].intensity,ZZP.VINFO[v].size,arrTr,ZZP.VINFO[v].name);  //console.log(cV.name,cV.traits);
+     var traitsFld = "";
+     if (cV.might>0){
+       //remove this trait
+       //cV.traits.splice(cV.traits.indexOf("might"),1);
+       traitsFld+="<span class='bang green'>[M"+cV.might+"] </span>";
+     }
+     if (cV.armor>1){
+       //remove this trait
+       //cV.traits.splice(cV.traits.indexOf("armor"),1);
+       traitsFld+="<span class='bang brown'>[T"+cV.armor+"] </span>";
+     }
+     if (cV.xSpry>0){
+       traitsFld+="<span class='bang red'>[s"+cV.xSpry+"] </span>";
+      }
+     traitsFld+=cV.traits.join(); if (cV.traits[0]!=""){traitsFld=""+traitsFld+"";}
+    retVehs+="<tr><td class='green' style='text-align:center;'>$"+cV.cost+"</td><td>"+cV.name+"</td><td class='red' style='text-align:center;'>[V"+cV.velocity+"]</td><td class='brown' style='text-align:center;'>[z"+cV.xSize+"]["+cV.cargo+"/"+cV.passengers+"]</td><td class='small'>"+traitsFld+"</td></tr>";
+  }
+  retVehs+="</table>"; document.getElementById("vehicle").innerHTML=retVehs; return retVehs;
 }
 function listWeapons(){
-  document.write(ZZP.WINFO);
+  retWeps = "<table><tr><th>Cost</th><th>Name</th><th>Intensity</th><th>Size</th><th>Traits</th></tr>";
+  for(w=0;w<ZZP.WINFO.length;w++){
+    var arrTr=[ZZP.WINFO[w].traits];
+    if (ZZP.WINFO[w].traits.indexOf("~")>0){arrTr=ZZP.WINFO[w].traits.split('~');}
+     var cW=WEP(ZZP.WINFO[w].intensity,ZZP.WINFO[w].size,arrTr,ZZP.WINFO[w].name);
+     var eT = "K"; var eC="green"; var eTraits=""; if (cW.etypes!==null){if(cW.etypes.length>0){eT="E"; eC="blue";eTraits="<span class='blue'>"+cW.etypes.join(", ")+" </span>";}} var wR = ""; if (cW.range!="default") {wR="[<span class='bang purple'>Range </span>"+cW.range+"] ";}
+
+    retWeps+="<tr><td class='green'>$"+cW.cost+"</td><td>"+cW.name+"</td><td class='"+eC+"'>["+eT+cW.intensity+"]</td><td class='brown'>[z"+cW.size+"]</td><td>"+wR+eTraits+cW.traits+"</td></tr>";
+  }
+  retWeps+="</table>";
+  document.getElementById("weapon").innerHTML=retWeps; return retWeps;
 }
-function listHeroes(){ hideHeroes();
-  var heroObj = _zzp.CHARINFO.find(findHero);
+function listHeroes(){ buildHeroes();//hideHeroes();
+/*
+  var heroObj = ZZP.CHARINFO.find(findHero);
   if (heroObj==null){
     showAllHeroes();
   } else {
     document.querySelector("div.info-box."+heroObj.alias.replace(" ","")).style.display= "inline-flex";
-  }
+  }*/
 }
-_zzp.HERO=listHeroes;
-_zzp.WEAPON=listWeapons;
-_zzp.VEHICLE=listVehicles;
-function hideHeroes(){document.querySelector("div.info-box").style.display="none";}
-function showAllHeroes(){document.querySelector("div.info-box").style.display="inline-flex";}
-function findHero(hero){return hero.alias===hashOperation;}
-
+ZZP.HERO=listHeroes;
+ZZP.WEAPON=listWeapons;
+ZZP.VEHICLE=listVehicles;
+ZZP.SHOW=showSelectedData;
+Array.prototype.remove = function(){
+    var args = Array.apply(null, arguments);
+    var indices = [];
+    for(var i = 0; i < args.length; i++){
+        var arg = args[i];
+        var index = this.indexOf(arg);
+        while(index > -1){
+            indices.push(index);
+            index = this.indexOf(arg, index + 1);
+        }
+    }
+    indices.sort();
+    for(var i = 0; i < indices.length; i++){
+        var index = indices[i] - i;
+        this.splice(index, 1);
+    }
+}
+Array.prototype.multisplice = function(){
+    var args = Array.apply(null, arguments);
+    args.sort(function(a, b){
+        return a - b;
+    });
+    for(var i = 0; i < args.length; i++){
+        var index = args[i] - i;
+        this.splice(index, 1);
+    }
+}
 function CSVToArray(strData, strDelimiter) {
     // Check to see if the delimiter is defined. If not,
     // then default to comma.
@@ -111,20 +176,15 @@ function CSV2OBJ(csv) {
 }
 function loadData(dataType) {
 	var dataEnum=0;
-	if (dataType=="vehicle"){dataEnum=1;}
-        else if (dataType=="weapon"){dataEnum=2;}
-	else {  dataType = "hero";}
-  // dataType="vehicle"; dataEnum = 1;
-  // dataType="weapon"; dataEnum = 2
+	if (dataType=="vehicle"){dataEnum=634773165;} else if (dataType=="weapon"){dataEnum=433192146;}	else {  dataType = "hero";}
   url= "https://docs.google.com/spreadsheets/d/e/2PACX-1vSbtWm06EoEuzW1F3NXmDuZI3hfQD-XEEaND93LyfZuidMMwacGUOe42L6J6xjb3txJ4aucpBRaeQfC/pub?single=true&output=csv&gid="+dataEnum;
-
-
                 csvData = $.ajax({
                     type: "GET",
                     url: url,
                     //dataType: "text/csv",
                     success: function (result) {
-                     console.log(dataType+": "+result.length);},
+                     console.log(dataType+": "+result.length);
+                     },
                     error: function (result){console.log("failure",result);}
                 })
     .done(function(result){
@@ -140,9 +200,9 @@ function buildArray(type, csvData){
     case "weapon":  buildWeaponsArray(csvData);
       break;
   }
-  showSelectedData();
 }
-function procArray(raw){var retA = [];
+function procArray(raw){
+  var retA = [];
   var rows = raw.split("\n");
   var headers = rows[0].split(",");
   for (r=1;r<rows.length;r++){
@@ -157,25 +217,22 @@ function procArray(raw){var retA = [];
     retA.push(obj);
   } return retA;
 }
+
 function buildCharArray(fullCSV){
-  _zzp.CHARINFO=procArray(fullCSV);
-  //buildHeroes();
+  ZZP.CHARINFO=procArray(fullCSV);
+  if (hashOperation!="vehicle"&&hashOperation!="weapon"){showSelectedData();}
 }
 function buildVArray(fullCSV){
-  _zzp.VINFO=procArray(fullCSV);
-  //buildVehicles();
+  ZZP.VINFO=procArray(fullCSV);
+  if (hashOperation=="vehicle"){showSelectedData();}
 }
 function buildWeaponsArray(fullCSV){
-  _zzp.WINFO=procArray(fullCSV);
-  //buildWeapons();
+  ZZP.WINFO=procArray(fullCSV);
+  if (hashOperation=="weapon"){showSelectedData();}
 }
-function addStyleString(str) {
-    var node = document.createElement('style');
-    node.innerHTML = str;
-    document.body.appendChild(node);
-}
+
 function buildHeroes(){
-  var CHARINFO=_zzp.CHARINFO;
+  var CHARINFO=ZZP.CHARINFO;
   var keys = Object.keys(CHARINFO); //get the keys.
   var docFrag = document.createDocumentFragment();
     //Contacts CSS
@@ -183,25 +240,25 @@ function buildHeroes(){
     //////////////////////Global Groups etc
     var groupsAr=[];
     var groupsCSS="";
-
+      var origNode = document.querySelector("div.info-box");
   for (var i = 0; i < keys.length; i++)
   {
     // Secret Identities Controller
-    if (CHARINFO[keys[i]].publicity!="secret"||window.location.href.indexOf("source.html")>-1){
-
-    var tempNode = document.querySelector("div[data-type='template']").cloneNode(true); //true for deep clone
+    if (CHARINFO[keys[i]].publicity!="secret"){
+    var tempNode = origNode.cloneNode(true); //true for deep clone
+    if (i==0){ origNode.remove();}
     tempNode.classList.add(CHARINFO[keys[i]].alias.replace(/ /g,''));
     tempNode.querySelector("div.alias").textContent = '"'+CHARINFO[keys[i]].alias+'"';
     tempNode.querySelector("div.infosheet").style.backgroundImage='url("https://image.ibb.co/'+CHARINFO[keys[i]].imgkey+'/'+CHARINFO[keys[i]].alias+'.png")';
     //contacts first box
     tempNode.querySelector("span.name").textContent = CHARINFO[keys[i]].name;
-    tempNode.querySelector("a.anchor").setAttribute("name",CHARINFO[keys[i]].alias).onclick="ZZP.HERO();";
+    tempNode.querySelector("a.anchor").setAttribute("name",CHARINFO[keys[i]].alias);
     tempNode.querySelector("span.ht").innerHTML = CHARINFO[keys[i]].ht;
     tempNode.querySelector("span.wt").textContent = CHARINFO[keys[i]].wt
     tempNode.querySelector("span.hq").textContent = CHARINFO[keys[i]].hq;
     tempNode.querySelector("span.debut").textContent = CHARINFO[keys[i]].debut;
     tempNode.querySelector("span.bio").textContent = CHARINFO[keys[i]].bio;
-    //if (CHARINFO[keys[i]].publicity!="open"){tempNode.style.display = "inline-flex";}
+    if (CHARINFO[keys[i]].publicity!="open"){tempNode.style.display = "inline-flex";}
 
     tempNode.querySelector("div.contactList").innerHTML = contactsHTML(CHARINFO[keys[i]].contacts);
 
@@ -288,7 +345,7 @@ function buildHeroes(){
     tempNode.classList.add(group.replace(/ /g,''));
     groupsAr.push(group);  }
 
-    document.body.appendChild(tempNode);
+    document.getElementById("hero").appendChild(tempNode);
   }//secret
   }
 
@@ -300,7 +357,30 @@ function buildHeroes(){
   getAliasGroup(groupsAr);
 
 }
+function buildVehicles(){
+  var vArr = ZZP.VINFO; //console.log(vArr);
+  var keys = Object.keys(vArr); //get the keys.
+  var docFrag = document.createDocumentFragment();
+  for (var i = 0; i < keys.length; i++)
+  {
 
+  }
+  document.body.appendChild(docFrag);
+  delete docFrag;
+}  //does nothing!!
+function buildWeapons(){
+  var wArr = ZZP.WINFO; //console.log(wArr);
+  var keys = Object.keys(wArr); //get the keys.
+  var docFrag = document.createDocumentFragment();
+
+  document.body.appendChild(docFrag);
+  delete docFrag;
+}  //does nothing!!
+function addStyleString(str) {
+    var node = document.createElement('style');
+    node.innerHTML = str;
+    document.body.appendChild(node);
+}
 function getModIntensity(oneIn){
   if (oneIn=="_"){return true;}
   return false;
@@ -436,7 +516,7 @@ function getAliasGroup(groups){
   var cleanGroups = [...new Set(groups)].filter(gr=>gr.length>0);
   var retGroupMkup=[]; var groupsCSS=""
   for (g=0;g<cleanGroups.length;g++){
-     var thisGroup = _zzp.CHARINFO.filter(char => char.primaryaffil==cleanGroups[g]); // Arr(GroupList) of Arr(Group) of Char Objs
+     var thisGroup = ZZP.CHARINFO.filter(char => char.primaryaffil==cleanGroups[g]); // Arr(GroupList) of Arr(Group) of Char Objs
      var groupShot = "<div class='groupShot "+cleanGroups[g].replace(/ /g,'')+"'>";
      for (t=0;t<thisGroup.length;t++){
         groupShot+="<a href='#"+thisGroup[t].alias+"' title='"+thisGroup[t].alias+"'><div class='contacts "+thisGroup[t].alias.replace(/ /g,'')+"'></div></a>";
@@ -456,7 +536,194 @@ function getAliasGroup(groups){
   return retGroupMkup;
 }
 
+var vTRAITS = ["turbo","luxurious","extra space","streamlined","sealed","armor","heavy armor","more armor","thrusters","wings","hover","antigrav","limbs"];
+var wTRAITS = ["short","touch","long","vlong","oneshot","limited","unlimited","slow","autofire","spread","area","e:_type_"];
+function VEH (engine, size, traits, name){
+  if (traits==null){traits=[];} if (name==null){name="Vehicle";}
+    var retVeh = {"engine":engine, "size":size, "traits":traits,
+      "velocity":engine, "cargo":size-engine, "passengers":Math.floor(size/2),
+      "xSize":size, "armor":1, "might":0, "xSpry":0, "cost":engine, "name":name
+    };
+    //process traits list to generate correct properties
+    if (traits.length>0){
+      if (traits[0].indexOf("~")>0){traits=ZZP.VINFO[v].traits.split('~');}
+    }
+    retVeh.xSpry = Math.floor(engine/2); var tooBig = size-engine;  if (tooBig>0){retVeh.xSpry-=tooBig;}
+    var wingsXorBlades = false;
+    var traitRemove=[];
+    for (i=0;i<traits.length;i++){
+        currT = traits[i].toLowerCase();
+        switch (currT){
+          case "turbo":
+            retVeh.cost++;
+            break;
+          case "luxurious":
+            retVeh.cost++;retVeh.cost++;
+            break;
+          case "extra space":
+            retVeh.cargo=size-1;
+            retVeh.cost++;
+            break;
+          case "streamlined":
+            retVeh.velocity++;retVeh.velocity++;
+            retVeh.cargo--;
+            retVeh.passengers--;
+            retVeh.cost++;
+            break;
+          case "sealed":
+            retVeh.cost++;
+            break;
+          case "armor":
+            retVeh.armor=Math.floor(size/2);
+            retVeh.cost++; traitRemove.push("armor");
+            break;
+          case "heavy armor":
+            retVeh.armor=size; if (retVeh.armor<2){retVeh.armor=2;}
+            retVeh.cost++;retVeh.cost++; traitRemove.push("armor"); traitRemove.push("heavy armor");
+            break;
+          case "more armor":
+            retVeh.armor++;
+            retVeh.cost++; traitRemove.push("more armor");
+            break;
+          case "thrusters":
+            retVeh.xSpry=0; retVeh.minv=1;
+            break;
+          case "wings":
+            retVeh.minv=3;
+            retVeh.velocity++;retVeh.velocity++;
+            if (!wingsXorBlades){retVeh.xSize++;}  wingsXorBlades=true;
+            break;
+          case "hover":  retVeh.minv=0;
+            if (!wingsXorBlades){retVeh.xSize++;}  wingsXorBlades=true;
+            retVeh.cost++;
+            break;
+          case "antigrav":
+            retVeh.xSpry++;
+            retVeh.cost++;retVeh.cost++;
+            break;
+          case "limbs":
+            retVeh.might++;
+            retVeh.cost++; traitRemove.push("limbs");
+          default:
+            //retVeh[currT]='true';
+            break;
+        }
+    }
+    if (traitRemove.length>0){
+      for (r=0;r<traitRemove.length;r++){
+        traits.splice(traits.indexOf(traitRemove[r]),1);
+      }
+    }
+    if (traits[0]==""){traits=[];}
+    retVeh.traits=traits;
+    if (retVeh.cargo<-3){retVeh.cargo=-3;} //this messes up SCALE perfection; all Pilots are assumed Z0 (human)
+    if (size>5){var zC = size-5; for (i=0;i<zC;i++){ retVeh.cost++;}}
+    if (retVeh.cost<retVeh.engine){retVeh.cost=retVeh.engine;}
+    retVeh.show=showVehicle;
+    return retVeh;
+}ZZP.VEH=VEH;
+function showVehicle(){
+
+
+  var sv = "<span class='green'>[$"+this.cost+"]</span><span> "+this.name+": </span><span class='red'>[V"+this.velocity+"]</span>"
+    +"<span class='brown'>[Z"+this.xSize+"]</span>"
+    +"<span class='brown'>["+this.cargo+"/"+this.passengers+"]</span>";
+  if (this.xSpry>0){sv+="<span class='red'>[S"+this.xSpry+"]</span>";}
+  if (this.might!=0){sv+="<span class='green'>[M"+this.might+"]</span>";}
+  var traitList = ""; var traitEnd="";
+  for (t=0;t<this.traits.length;t++){
+    var comma = ", "; if (t==this.traits.length-1) { comma = "";}
+    if (t==0){traitList="<span class='small'> ("; traitEnd=")</span>";}
+    traitList+=this.traits[t];
+      if (this.traits[t].indexOf("armor")>=0){traitList+="<span class='brown'> [T"+this.armor+"]</span>";}
+    traitList+=comma;
+  } sv+=traitList+traitEnd;
+  return sv+"<br/>";
+};
+
+function WEP(intensity, size, traits, name) {
+  var retWep={}; var removeTraits=[];
+  if (traits==null){traits=[];} if (name==null){name="Weapon";}
+  retWep = {"name":name,"size":size, "intensity":intensity, "traits":traits, "range":"default", "ammo":"default", "type":"", "etypes":[], "cost":intensity};
+  //process traits list to generate correct properties
+  for (i=0;i<traits.length;i++){
+    switch (traits[i]){
+      case "short":
+        retWep.cost--; retWep.range=traits[i]; removeTraits.push(traits[i]);
+        break;
+      case "touch":
+        retWep.cost-=2; retWep.range=traits[i]; removeTraits.push(traits[i]);
+        break;
+      case "long":
+        retWep.cost++; retWep.range=traits[i]; removeTraits.push(traits[i]);
+        break;
+      case "vlong":
+        retWep.cost++;retWep.cost++; retWep.range=traits[i]; removeTraits.push(traits[i]);
+        break;
+      case "oneshot":
+        retWep.cost--; retWep.ammo=traits[i];
+        break;
+      case "limited":
+        retWep.cost--; retWep.ammo=traits[i];
+        break;
+      case "unlimited":
+        retWep.cost++; retWep.ammo=traits[i];
+        break;
+      case "slow":
+        retWep.cost--; retWep.ammo=traits[i];
+        break;
+      case "autofire":
+        retWep.cost++; retWep.ammo=traits[i];
+        break;
+      case "spread":
+        retWep.cost++;
+        break;
+      case "area":
+        retWep.cost++;retWep.cost++;
+        break;
+      default: break;
+    }
+    if (traits[i].indexOf("e:")==0){
+      retWep.type="energy"; retWep.etypes.push(traits[i]); removeTraits.push(traits[i]);
+      retWep.cost++;
+    }
+  }
+  if (retWep.size<0){retWep.cost-=retWep.size;}else if(retWep.size>5){retWep.cost--;if (retWep.size>intensity){retWep.cost--;}}
+  if (retWep.cost<intensity){retWep.cost=intensity;}
+  retWep.show = showWeapon;
+  for (r=0;r<removeTraits.length;r++){retWep.traits.remove(removeTraits[r]);}
+  return retWep;
+}ZZP.WEP=WEP;
+function showWeapon(){  var iColor="green"; var iLetter="K";
+    if (this.type=="energy"){iColor="blue"; iLetter="E"}
+  var sw = "<span class='green'>[$"+this.cost+"]</span><span> "+this.name+": </span><span class='"+iColor+"'>["+iLetter+this.intensity+"]</span>"
+    +"<span class='brown'>[Z"+this.size+"] </span>";
+      //range, ammo shown outside "default"
+    if (this.range!="default"){sw+="<span class='purple small bang'>Range </span><span class='small'>"+this.range+" </span>"; }
+  var dTraits = []; var dTbegin ="<span class='small'> (";
+  if (this.ammo!="default"){sw+=dTbegin+"<span class='small'>"+this.ammo+" </span>";dTbegin="";}
+  //autofire, spread, area, energy only vTRAITS
+  if (this.traits.includes("autofire")){}//dTraits.push("autofire");}
+  if (this.traits.includes("spread")){dTraits.push("spread");}
+  if (this.traits.includes("area")){dTraits.push("area");}
+  var eTypes="";
+  if (this.type=="energy"){
+    eTypes+=dTbegin+"<span class='blue small'>"; dTbegin="";
+    for (e=0;e<this.etypes.length;e++){
+      var comma = ", "; if (e==this.etypes.length-1) { comma = " ";}
+      eTypes+=this.etypes[e]+comma;
+    }
+    eTypes+="</span>";
+  }
+
+  var traitList = ""; var traitEnd=")</span>"; if (dTraits.length==0&&dTbegin.length>0){traitEnd="";}
+  for (t=0;t<dTraits.length;t++){  sw+=dTbegin; dTbegin="";
+    var comma = ", "; if (t==dTraits.length-1) { comma = " ";}
+
+    traitList+="<span class='small'>"+dTraits[t]+"</span>";
+    traitList+=comma;
+  } sw+=traitList+eTypes+traitEnd;
+  return sw+"<br/>";
+}
 loadAllData();
-return _zzp;
 })();
-console.log(ZZP.CHARINFO);
