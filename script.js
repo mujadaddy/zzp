@@ -1,28 +1,33 @@
 (function () {
   	ZZP={};
+  	ZZP.LOADED=[];
   	ZZP.CHARINFO=[];
     ZZP.LEVEL="GUEST";
-    var dataType = "hero";
+    var dType = "hero"; var aType=["hero","vehicle","weapon"];
+    ZZP.TYPES=aType;
 if (location.href.indexOf("source.html")>-1){ZZP.LEVEL="FULL";}
-var hashOperation = location.hash.replace("#",""); if (hashOperation=="vehicle"||hashOperation=="weapon"){dataType=hashOperation;}
+
+function getHash(){var hO = location.hash.replace("#",""); if (hO==aType[1]||hO==aType[2]){dType=hO;}return hO; }
+var hashOperation = getHash();
 
 function loadAllData(){
-  loadData("hero"); loadData("vehicle"); loadData("weapon");
+  loadData(dType);
 }
 function showSelectedData(){
-  document.getElementById("hero").style.display="none";
-  document.getElementById("vehicle").style.display="none";
-  document.getElementById("weapon").style.display="none";
+  document.getElementById(aType[0]).style.display="none";
+  document.getElementById(aType[1]).style.display="none";
+  document.getElementById(aType[2]).style.display="none";
+  hashOperation = getHash();
   switch (hashOperation){
-    case "vehicle": listVehicles(); //display all vehicles
-  document.getElementById("vehicle").style.display="inline-flex";
+    case aType[1]: listVehicles(); //display all vehicles
+  document.getElementById(aType[1]).style.display="inline-flex";
       break;
-    case "weapon":listWeapons(); //display all weapons
-  document.getElementById("weapon").style.display="inline-flex";
+    case aType[2]:listWeapons(); //display all weapons
+  document.getElementById(aType[2]).style.display="inline-flex";
       break;
     default:
       listHeroes(); //try to find Hero to display
-  document.getElementById("hero").style.display="block";
+  document.getElementById(aType[0]).style.display="block";
       break;
   }
 }
@@ -176,7 +181,7 @@ function CSV2OBJ(csv) {
 }
 function loadData(dataType) {
 	var dataEnum=0;
-	if (dataType=="vehicle"){dataEnum=634773165;} else if (dataType=="weapon"){dataEnum=433192146;}	else {  dataType = "hero";}
+	if (dataType==aType[1]){dataEnum=634773165;} else if (dataType==aType[2]){dataEnum=433192146;}	else {  dataType = aType[0];}
   url= "https://docs.google.com/spreadsheets/d/e/2PACX-1vSbtWm06EoEuzW1F3NXmDuZI3hfQD-XEEaND93LyfZuidMMwacGUOe42L6J6xjb3txJ4aucpBRaeQfC/pub?single=true&output=csv&gid="+dataEnum;
                 csvData = $.ajax({
                     type: "GET",
@@ -193,14 +198,20 @@ function loadData(dataType) {
 }
 function buildArray(type, csvData){
   switch (type){
-    case "hero": buildCharArray(csvData);
+    case "hero": buildCharArray(csvData); ZZP.LOADED.push(type);
       break;
-    case "vehicle": buildVArray(csvData);
+    case "vehicle": buildVArray(csvData); ZZP.LOADED.push(type);
       break;
-    case "weapon":  buildWeaponsArray(csvData);
+    case "weapon":  buildWeaponsArray(csvData); ZZP.LOADED.push(type);
       break;
   }
+  lazyLoad();
 }
+function lazyLoad(){
+    if (!ZZP.LOADED.includes(aType[0])){loadData(aType[0]);}
+     else if (!ZZP.LOADED.includes(aType[1])){loadData(aType[1]);}
+    else if (!ZZP.LOADED.includes(aType[2])){loadData(aType[2]);}
+  }
 function procArray(raw){
   var retA = [];
   var rows = raw.split("\n");
@@ -220,15 +231,15 @@ function procArray(raw){
 
 function buildCharArray(fullCSV){
   ZZP.CHARINFO=procArray(fullCSV);
-  if (hashOperation!="vehicle"&&hashOperation!="weapon"){showSelectedData();}
+  if (hashOperation!=aType[1]&&hashOperation!=aType[2]){showSelectedData();}
 }
 function buildVArray(fullCSV){
   ZZP.VINFO=procArray(fullCSV);
-  if (hashOperation=="vehicle"){showSelectedData();}
+  if (hashOperation==aType[1]){showSelectedData();}
 }
 function buildWeaponsArray(fullCSV){
   ZZP.WINFO=procArray(fullCSV);
-  if (hashOperation=="weapon"){showSelectedData();}
+  if (hashOperation==aType[2]){showSelectedData();}
 }
 
 function buildHeroes(){
